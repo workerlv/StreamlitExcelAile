@@ -42,7 +42,13 @@ with st.expander("IS exceļa pārbaude"):
         df_delivery_spec['Column1_Value_Counts'] = df_delivery_spec['Unnamed: 6'].map(df_delivery_spec['Unnamed: 6'].value_counts())
         df_final = df_delivery_spec[df_delivery_spec["Column1_Value_Counts"] > 1].sort_values(by="Unnamed: 6")
         df_final.drop("Column1_Value_Counts", axis=1, inplace=True)
-        df_final = df_final.rename(columns={'Unnamed: 6': 'Pozī'})
+        df_final = df_final.rename(columns={"Unnamed: 6": "Pozīcija",
+                                            "Unnamed: 8": "Nosaukums",
+                                            "Unnamed: 9": "Krāsa",
+                                            "Unnamed: 28": "Platums",
+                                            "Unnamed: 29": "Augstums",
+                                            "Unnamed: 30": "Biezums",
+                                            "Unnamed: 34": "Svars"})
 
         st.dataframe(df_final)
 
