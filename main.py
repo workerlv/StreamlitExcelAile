@@ -40,7 +40,11 @@ with st.expander("IS exceļa pārbaude"):
 
         df_delivery_spec.drop_duplicates(inplace=True)
         df_delivery_spec['Column1_Value_Counts'] = df_delivery_spec['Unnamed: 6'].map(df_delivery_spec['Unnamed: 6'].value_counts())
-        st.dataframe(df_delivery_spec[df_delivery_spec["Column1_Value_Counts"] > 1].sort_values(by="Unnamed: 6"))
+        df_final = df_delivery_spec[df_delivery_spec["Column1_Value_Counts"] > 1].sort_values(by="Unnamed: 6")
+        df_final.drop("Column1_Value_Counts", axis=1, inplace=True)
+        df_final = df_final.rename(columns={'Unnamed: 6': 'Pozī'})
+
+        st.dataframe(df_final)
 
 
 with st.expander("Meklēt vērtības"):
