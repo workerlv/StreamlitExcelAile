@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from collections import Counter
 from io import BytesIO
 
 
@@ -17,65 +16,90 @@ def to_excel(data_frame):
     return processed_data
 
 
-df_main_values = pd.DataFrame()
-df_lookup_values = pd.DataFrame()
+with st.expander("IS exceļa pārbaude"):
+    uploaded_file_excels_checkup = st.file_uploader("Ievietot IS excel failu", type=["csv", "xlsx"])
 
-st.write("Look up values")
+    df_delivery_spec = pd.DataFrame()
 
-uploaded_file = st.file_uploader("Choose file", type=["csv", "xlsx"])
-
-if uploaded_file is None:
-    with open("lookup_values_template.xlsx", "rb") as template_excel_lookup:
-        st.download_button(
-            label="Download empty template",
-            data=template_excel_lookup,
-            file_name="lookup_values_template.xlsx"
-        )
-
-
-if uploaded_file is not None:
-    if uploaded_file.type == "text/csv":
-        df_main_values = pd.read_excel(uploaded_file, sheet_name="main_values")
-        df_lookup_values = pd.read_excel(uploaded_file, sheet_name="look_up_values", index_col=0,
-                                         dtype=str)
-    else:
-        df_main_values = pd.read_excel(uploaded_file, sheet_name="main_values")
-        df_lookup_values = pd.read_excel(uploaded_file, sheet_name="look_up_values", index_col=0,
-                                         dtype=str)
-
-if uploaded_file is not None:
-
-    value_dictionary = df_lookup_values.to_dict('index')
-    main_values_list = df_main_values["Main values"].tolist()
-
-    new_df_dict = {
-        "Main values": [],
-        "value 1": [],
-        "value 2": [],
-        "value 3": [],
-        "value 4": [],
-        "value 5": []
-    }
-
-    new_df = pd.DataFrame(new_df_dict)
-
-    for main_value in main_values_list:
-        if main_value in value_dictionary.keys():
-            new_df.loc[len(new_df.index)] = [main_value, value_dictionary[main_value]["value 1"],
-                                             value_dictionary[main_value]["value 2"],
-                                             value_dictionary[main_value]["value 3"],
-                                             value_dictionary[main_value]["value 4"],
-                                             value_dictionary[main_value]["value 5"]]
+    if uploaded_file_excels_checkup is not None:
+        if uploaded_file_excels_checkup.type == "text/csv":
+            df_delivery_spec = pd.read_excel(uploaded_file_excels_checkup, sheet_name="3. DELIVERY SPEC.", dtype=str)
         else:
-            new_df.loc[len(new_df.index)] = [main_value, "", "", "", "", ""]
+            df_delivery_spec = pd.read_excel(uploaded_file_excels_checkup, sheet_name="3. DELIVERY SPEC.", dtype=str)
 
-    new_df.fillna("", inplace=True)
+    if uploaded_file_excels_checkup is not None:
 
-    st.write("Looked up list")
-    st.dataframe(new_df)
+        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(0, 6)], axis=1, inplace=True)
+        df_delivery_spec.drop(["Unnamed: 7", "Unnamed: 10", "Unnamed: 11", "Unnamed: 12"], axis=1, inplace=True)
+        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(13, 28)], axis=1, inplace=True)
+        df_delivery_spec.drop(["Unnamed: 31", "Unnamed: 32", "Unnamed: 33"], axis=1, inplace=True)
+        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(35, 46)], axis=1, inplace=True)
+        df_delivery_spec.drop([0, 1], axis=0, inplace=True)
 
-    st.download_button(
-                label="Download result",
-                data=to_excel(new_df),
-                file_name='result.xlsx'
+        df_delivery_spec.fillna(" ", inplace=True)
+
+        df_delivery_spec.drop_duplicates(inplace=True)
+        df_delivery_spec['Column1_Value_Counts'] = df_delivery_spec['Unnamed: 6'].map(df_delivery_spec['Unnamed: 6'].value_counts())
+        st.dataframe(df_delivery_spec[df_delivery_spec["Column1_Value_Counts"] > 1].sort_values(by="Unnamed: 6"))
+
+
+with st.expander("Meklēt vērtības"):
+    df_main_values = pd.DataFrame()
+    df_lookup_values = pd.DataFrame()
+
+    uploaded_file = st.file_uploader("Ievietot failu", type=["csv", "xlsx"])
+
+    if uploaded_file is None:
+        with open("lookup_values_template.xlsx", "rb") as template_excel_lookup:
+            st.download_button(
+                label="Lejuplādēt template",
+                data=template_excel_lookup,
+                file_name="lookup_values_template.xlsx"
             )
+
+    if uploaded_file is not None:
+        if uploaded_file.type == "text/csv":
+            df_main_values = pd.read_excel(uploaded_file, sheet_name="main_values")
+            df_lookup_values = pd.read_excel(uploaded_file, sheet_name="look_up_values", index_col=0,
+                                             dtype=str)
+        else:
+            df_main_values = pd.read_excel(uploaded_file, sheet_name="main_values")
+            df_lookup_values = pd.read_excel(uploaded_file, sheet_name="look_up_values", index_col=0,
+                                             dtype=str)
+
+    if uploaded_file is not None:
+
+        value_dictionary = df_lookup_values.to_dict('index')
+        main_values_list = df_main_values["Main values"].tolist()
+
+        new_df_dict = {
+            "Main values": [],
+            "value 1": [],
+            "value 2": [],
+            "value 3": [],
+            "value 4": [],
+            "value 5": []
+        }
+
+        new_df = pd.DataFrame(new_df_dict)
+
+        for main_value in main_values_list:
+            if main_value in value_dictionary.keys():
+                new_df.loc[len(new_df.index)] = [main_value, value_dictionary[main_value]["value 1"],
+                                                 value_dictionary[main_value]["value 2"],
+                                                 value_dictionary[main_value]["value 3"],
+                                                 value_dictionary[main_value]["value 4"],
+                                                 value_dictionary[main_value]["value 5"]]
+            else:
+                new_df.loc[len(new_df.index)] = [main_value, "", "", "", "", ""]
+
+        new_df.fillna("", inplace=True)
+
+        st.write("Rezultāts")
+        st.dataframe(new_df)
+
+        st.download_button(
+                    label="Lejuplādēt rezultātu",
+                    data=to_excel(new_df),
+                    file_name='result.xlsx'
+                )
