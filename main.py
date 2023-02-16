@@ -29,7 +29,15 @@ with st.expander("IS exceļa pārbaude"):
 
     if uploaded_file_excels_checkup is not None:
 
-        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(0, 6)], axis=1, inplace=True)
+        weight = st.checkbox(f"Rādīt svaru")
+        detail_type = st.checkbox(f"Rādīt apakšelementu")
+
+        # st.dataframe(df_delivery_spec)
+        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(0, 5)], axis=1, inplace=True)
+
+        if not detail_type:
+            df_delivery_spec.drop(["Unnamed: 5"], axis=1, inplace=True)
+
         df_delivery_spec.drop(["Unnamed: 7", "Unnamed: 10", "Unnamed: 11", "Unnamed: 12"], axis=1, inplace=True)
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(13, 28)], axis=1, inplace=True)
         df_delivery_spec.drop(["Unnamed: 31", "Unnamed: 32", "Unnamed: 33"], axis=1, inplace=True)
@@ -38,10 +46,14 @@ with st.expander("IS exceļa pārbaude"):
 
         df_delivery_spec.fillna(" ", inplace=True)
 
-        df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.strip()
-        df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.strip()
-        df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.strip()
-        df_delivery_spec["Unnamed: 34"] = df_delivery_spec["Unnamed: 34"].str.strip()
+        df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.replace(' ', '')
+        df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.replace(' ', '')
+        df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.replace(' ', '')
+        if not weight:
+            df_delivery_spec.drop(["Unnamed: 34"], axis=1, inplace=True)
+
+        if weight:
+            df_delivery_spec["Unnamed: 34"] = df_delivery_spec["Unnamed: 34"].str.replace(' ', '')
 
         df_delivery_spec.drop_duplicates(inplace=True)
         df_delivery_spec['Column1_Value_Counts'] = df_delivery_spec['Unnamed: 6'].map(df_delivery_spec['Unnamed: 6'].value_counts())
@@ -54,6 +66,12 @@ with st.expander("IS exceļa pārbaude"):
                                             "Unnamed: 29": "Augstums",
                                             "Unnamed: 30": "Biezums",
                                             "Unnamed: 34": "Svars"})
+
+        if weight:
+            df_final = df_final.rename(columns={"Unnamed: 34": "Svars"})
+
+        if detail_type:
+            df_final = df_final.rename(columns={"Unnamed: 5": "Apakšelements"})
 
         st.dataframe(df_final)
 
