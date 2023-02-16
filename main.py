@@ -38,6 +38,11 @@ with st.expander("IS exceļa pārbaude"):
 
         df_delivery_spec.fillna(" ", inplace=True)
 
+        df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.strip()
+        df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.strip()
+        df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.strip()
+        df_delivery_spec["Unnamed: 34"] = df_delivery_spec["Unnamed: 34"].str.strip()
+
         df_delivery_spec.drop_duplicates(inplace=True)
         df_delivery_spec['Column1_Value_Counts'] = df_delivery_spec['Unnamed: 6'].map(df_delivery_spec['Unnamed: 6'].value_counts())
         df_final = df_delivery_spec[df_delivery_spec["Column1_Value_Counts"] > 1].sort_values(by="Unnamed: 6")
@@ -49,11 +54,6 @@ with st.expander("IS exceļa pārbaude"):
                                             "Unnamed: 29": "Augstums",
                                             "Unnamed: 30": "Biezums",
                                             "Unnamed: 34": "Svars"})
-
-        df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.strip()
-        df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.strip()
-        df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.strip()
-        df_delivery_spec["Unnamed: 34"] = df_delivery_spec["Unnamed: 34"].str.strip()
 
         st.dataframe(df_final)
 
