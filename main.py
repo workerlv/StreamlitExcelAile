@@ -50,10 +50,10 @@ with st.expander("IS exceļa pārbaude"):
                                             "Unnamed: 30": "Biezums",
                                             "Unnamed: 34": "Svars"})
 
-        df_delivery_spec["Platums"] = df_delivery_spec["Platums"].str.strip()
-        df_delivery_spec["Augstums"] = df_delivery_spec["Augstums"].str.strip()
-        df_delivery_spec["Biezums"] = df_delivery_spec["Biezums"].str.strip()
-        df_delivery_spec["Svars"] = df_delivery_spec["Svars"].str.strip()
+        df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.strip()
+        df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.strip()
+        df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.strip()
+        df_delivery_spec["Unnamed: 34"] = df_delivery_spec["Unnamed: 34"].str.strip()
 
         st.dataframe(df_final)
 
