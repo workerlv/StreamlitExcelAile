@@ -31,7 +31,7 @@ with st.expander("IS exceļa pārbaude"):
 
         weight = st.checkbox(f"Rādīt svaru")
         detail_type = st.checkbox(f"Rādīt apakšelementu")
-
+        st.dataframe(df_delivery_spec)
 
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(0, 2)], axis=1, inplace=True)
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(3, 5)], axis=1, inplace=True)
@@ -52,6 +52,7 @@ with st.expander("IS exceļa pārbaude"):
 
         # st.dataframe(df_delivery_spec)
 
+        df_delivery_spec["Unnamed: 9"] = df_delivery_spec["Unnamed: 9"].str.replace(' ', '')
         df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.replace(' ', '')
         df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.replace(' ', '')
         df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.replace(' ', '')
