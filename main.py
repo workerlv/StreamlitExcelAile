@@ -31,7 +31,7 @@ with st.expander("IS exceļa pārbaude"):
 
         weight = st.checkbox(f"Rādīt svaru")
         detail_type = st.checkbox(f"Rādīt apakšelementu")
-        position = st.checkbox(f"Rādīt pozīciju")
+        # position = st.checkbox(f"Rādīt pozīciju")
 
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(0, 2)], axis=1, inplace=True)
         # df_delivery_spec.drop([f"Unnamed: {v}" for v in range(3, 5)], axis=1, inplace=True)
@@ -39,8 +39,8 @@ with st.expander("IS exceļa pārbaude"):
         if not detail_type:
             df_delivery_spec.drop(["Unnamed: 5"], axis=1, inplace=True)
 
-        if not position:
-            df_delivery_spec.drop(["Unnamed: 4"], axis=1, inplace=True)
+        # if not position:
+        df_delivery_spec.drop(["Unnamed: 4"], axis=1, inplace=True)
 
         df_delivery_spec.drop(["Unnamed: 3", "Unnamed: 7", "Unnamed: 10", "Unnamed: 11", "Unnamed: 12"], axis=1, inplace=True)
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(13, 28)], axis=1, inplace=True)
@@ -84,8 +84,8 @@ with st.expander("IS exceļa pārbaude"):
         if detail_type:
             df_final = df_final.rename(columns={"Unnamed: 5": "Apakšelements"})
 
-        if position:
-            df_final = df_final.rename(columns={"Unnamed: 4": "Pozīcija"})
+        # if position:
+        #     df_final = df_final.rename(columns={"Unnamed: 4": "Pozīcija"})
 
         st.dataframe(df_final)
 
