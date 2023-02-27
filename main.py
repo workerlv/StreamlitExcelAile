@@ -31,15 +31,18 @@ with st.expander("IS exceļa pārbaude"):
 
         weight = st.checkbox(f"Rādīt svaru")
         detail_type = st.checkbox(f"Rādīt apakšelementu")
-
+        position = st.checkbox(f"Rādīt pozīciju")
 
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(0, 2)], axis=1, inplace=True)
-        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(3, 5)], axis=1, inplace=True)
+        # df_delivery_spec.drop([f"Unnamed: {v}" for v in range(3, 5)], axis=1, inplace=True)
 
         if not detail_type:
             df_delivery_spec.drop(["Unnamed: 5"], axis=1, inplace=True)
 
-        df_delivery_spec.drop(["Unnamed: 7", "Unnamed: 10", "Unnamed: 11", "Unnamed: 12"], axis=1, inplace=True)
+        if not position:
+            df_delivery_spec.drop(["Unnamed: 4"], axis=1, inplace=True)
+
+        df_delivery_spec.drop(["Unnamed: 3", "Unnamed: 7", "Unnamed: 10", "Unnamed: 11", "Unnamed: 12"], axis=1, inplace=True)
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(13, 28)], axis=1, inplace=True)
         df_delivery_spec.drop(["Unnamed: 31", "Unnamed: 32", "Unnamed: 33"], axis=1, inplace=True)
         df_delivery_spec.drop([f"Unnamed: {v}" for v in range(35, 46)], axis=1, inplace=True)
@@ -50,23 +53,24 @@ with st.expander("IS exceļa pārbaude"):
         df_delivery_spec['Unnamed: 2'] = df_delivery_spec['Unnamed: 2'].map({"Jā": 1, "Nē": 0})
         df_delivery_spec = df_delivery_spec[df_delivery_spec["Unnamed: 2"] > 0]
 
-
-
         df_delivery_spec["Unnamed: 9"] = df_delivery_spec["Unnamed: 9"].str.replace(' ', '')
         df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.replace(' ', '')
         df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.replace(' ', '')
         df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.replace(' ', '')
+
         if not weight:
             df_delivery_spec.drop(["Unnamed: 34"], axis=1, inplace=True)
 
         if weight:
             df_delivery_spec["Unnamed: 34"] = df_delivery_spec["Unnamed: 34"].str.replace(' ', '')
+
         # st.dataframe(df_delivery_spec)
         df_delivery_spec.drop_duplicates(inplace=True)
         df_delivery_spec['Column1_Value_Counts'] = df_delivery_spec['Unnamed: 6'].map(df_delivery_spec['Unnamed: 6'].value_counts())
         df_final = df_delivery_spec[df_delivery_spec["Column1_Value_Counts"] > 1].sort_values(by="Unnamed: 6")
         df_final.drop(["Column1_Value_Counts", "Unnamed: 2"], axis=1, inplace=True)
-        df_final = df_final.rename(columns={"Unnamed: 6": "Pozīcija",
+
+        df_final = df_final.rename(columns={"Unnamed: 6": "Marķējums",
                                             "Unnamed: 8": "Nosaukums",
                                             "Unnamed: 9": "Krāsa",
                                             "Unnamed: 28": "Platums",
@@ -79,6 +83,9 @@ with st.expander("IS exceļa pārbaude"):
 
         if detail_type:
             df_final = df_final.rename(columns={"Unnamed: 5": "Apakšelements"})
+
+        if position:
+            df_final = df_final.rename(columns={"Unnamed: 4": "Pozīcija"})
 
         st.dataframe(df_final)
 
