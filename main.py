@@ -1,3 +1,4 @@
+from IS_EXCEL import IsExcel as IE
 import streamlit as st
 import pandas as pd
 from io import BytesIO
@@ -17,78 +18,20 @@ def to_excel(data_frame):
 
 
 with st.expander("IS exceļa pārbaude"):
-    uploaded_file_excels_checkup = st.file_uploader("Ievietot IS excel failu", type=["csv", "xlsx"])
+    uploaded_is_excel = st.file_uploader("Ievietot IS excel failu.", type=["csv", "xlsx"])
 
-    df_delivery_spec = pd.DataFrame()
+    weight = st.checkbox(f"Rādīt svaru")
+    detail_type = st.checkbox(f"Rādīt apakšelementu")
+    show_by_position = st.checkbox(f"Pārbaudīt pēc elementa marķējuma")
 
-    if uploaded_file_excels_checkup is not None:
-        if uploaded_file_excels_checkup.type == "text/csv":
-            df_delivery_spec = pd.read_excel(uploaded_file_excels_checkup, sheet_name="3. DELIVERY SPEC.", dtype=str)
-        else:
-            df_delivery_spec = pd.read_excel(uploaded_file_excels_checkup, sheet_name="3. DELIVERY SPEC.", dtype=str)
+    if uploaded_is_excel is not None:
+        excel_data = IE(uploaded_is_excel)
 
-    if uploaded_file_excels_checkup is not None:
+        st.dataframe(excel_data.check_excel_by_marking(weight=weight,
+                                                       detail_type=detail_type))
 
-        weight = st.checkbox(f"Rādīt svaru")
-        detail_type = st.checkbox(f"Rādīt apakšelementu")
-        # position = st.checkbox(f"Rādīt pozīciju")
-
-        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(0, 2)], axis=1, inplace=True)
-        # df_delivery_spec.drop([f"Unnamed: {v}" for v in range(3, 5)], axis=1, inplace=True)
-
-        if not detail_type:
-            df_delivery_spec.drop(["Unnamed: 5"], axis=1, inplace=True)
-
-        # if not position:
-        df_delivery_spec.drop(["Unnamed: 4"], axis=1, inplace=True)
-
-        df_delivery_spec.drop(["Unnamed: 3", "Unnamed: 7", "Unnamed: 10", "Unnamed: 11", "Unnamed: 12"], axis=1, inplace=True)
-        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(13, 28)], axis=1, inplace=True)
-        df_delivery_spec.drop(["Unnamed: 31", "Unnamed: 32", "Unnamed: 33"], axis=1, inplace=True)
-        df_delivery_spec.drop([f"Unnamed: {v}" for v in range(35, 46)], axis=1, inplace=True)
-        df_delivery_spec.drop([0, 1], axis=0, inplace=True)
-
-        df_delivery_spec.fillna(" ", inplace=True)
-
-        df_delivery_spec['Unnamed: 2'] = df_delivery_spec['Unnamed: 2'].map({"Jā": 1, "Nē": 0})
-        df_delivery_spec = df_delivery_spec[df_delivery_spec["Unnamed: 2"] > 0]
-
-        df_delivery_spec["Unnamed: 9"] = df_delivery_spec["Unnamed: 9"].str.replace(' ', '')
-        df_delivery_spec["Unnamed: 28"] = df_delivery_spec["Unnamed: 28"].str.replace(' ', '')
-        df_delivery_spec["Unnamed: 29"] = df_delivery_spec["Unnamed: 29"].str.replace(' ', '')
-        df_delivery_spec["Unnamed: 30"] = df_delivery_spec["Unnamed: 30"].str.replace(' ', '')
-
-        if not weight:
-            df_delivery_spec.drop(["Unnamed: 34"], axis=1, inplace=True)
-
-        if weight:
-            df_delivery_spec["Unnamed: 34"] = df_delivery_spec["Unnamed: 34"].str.replace(' ', '')
-
-        # st.dataframe(df_delivery_spec)
-        df_delivery_spec.drop_duplicates(inplace=True)
-        df_delivery_spec['Column1_Value_Counts'] = df_delivery_spec['Unnamed: 6'].map(df_delivery_spec['Unnamed: 6'].value_counts())
-        df_final = df_delivery_spec[df_delivery_spec["Column1_Value_Counts"] > 1].sort_values(by="Unnamed: 6")
-        df_final.drop(["Column1_Value_Counts", "Unnamed: 2"], axis=1, inplace=True)
-
-        df_final = df_final.rename(columns={"Unnamed: 6": "Marķējums",
-                                            "Unnamed: 8": "Nosaukums",
-                                            "Unnamed: 9": "Krāsa",
-                                            "Unnamed: 28": "Platums",
-                                            "Unnamed: 29": "Augstums",
-                                            "Unnamed: 30": "Biezums",
-                                            "Unnamed: 34": "Svars"})
-
-        if weight:
-            df_final = df_final.rename(columns={"Unnamed: 34": "Svars"})
-
-        if detail_type:
-            df_final = df_final.rename(columns={"Unnamed: 5": "Apakšelements"})
-
-        # if position:
-        #     df_final = df_final.rename(columns={"Unnamed: 4": "Pozīcija"})
-
-        st.dataframe(df_final)
-
+        if show_by_position:
+            st.dataframe(excel_data.check_excel_by_position())
 
 with st.expander("Meklēt vērtības"):
     df_main_values = pd.DataFrame()
